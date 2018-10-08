@@ -4,11 +4,14 @@
     using System.Collections.Generic;
     using System.Linq;
     using MyWebServer.HTTP.Common;
+    using MyWebServer.HTTP.Cookies;
+    using MyWebServer.HTTP.Cookies.Contracts;
     using MyWebServer.HTTP.Enums;
     using MyWebServer.HTTP.Exceptions;
     using MyWebServer.HTTP.Headers;
     using MyWebServer.HTTP.Headers.Contracts;
     using MyWebServer.HTTP.Requests.Contracts;
+    using MyWebServer.HTTP.Sessions.Contracts;
 
     public class HttpRequest : IHttpRequest
     {
@@ -19,6 +22,8 @@
             this.QueryData = new Dictionary<string, object>();
 
             this.Headers = new HttpHeadersCollection();
+
+            this.Cookies = new HttpCookieCollection();
 
             this.ParseRequest(requestString);
         }
@@ -34,6 +39,10 @@
         public IHttpHeadersCollection Headers { get; }
 
         public HttpRequestMethod RequestMethod { get; private set; }
+
+        public IHttpCookieCollection Cookies { get; }
+
+        public IHttpSession Session { get ; set; }
 
 
 
@@ -57,10 +66,39 @@
             this.ParseRequestPath();
 
             this.ParseHeaders(splitRequestContent.Skip(1).ToArray());
+            this.ParseCookies();
 
             bool requestHasBody = splitRequestContent.Length > 1;
 
             this.ParseRequestParameters(splitRequestContent[splitRequestContent.Length - 1], requestHasBody);
+        }
+
+        private void ParseCookies()
+        {
+            if (!this.Headers.ContainsHeader(GlobalConstants.CookieRequestHeaderName))
+            {
+                return;
+            }
+
+            var cookiesString = this.Headers.GetHeader(GlobalConstants.CookieRequestHeaderName).Value;
+            if (string.IsNullOrEmpty(cookiesString)) return;
+            
+            var splitCookies = cookiesString.Split("; ", StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var splitCookie in splitCookies)
+            {
+                var cookieKeyValuePair = splitCookie.Split("=",2,StringSplitOptions.RemoveEmptyEntries);
+                if (cookieKeyValuePair.Length !=
+                    GlobalConstants.ExactNumberOfParametersInRequestParameterKeValuePair)
+                {
+                    throw new BadRequestException();
+                }
+
+                var cookieName = cookieKeyValuePair[0];
+                var cookieValue = cookieKeyValuePair[1];
+
+                this.Cookies.Add(new HttpCookie(cookieName, cookieValue));
+            }
         }
 
         private void ParseRequestParameters(string bodyParameters, bool requestHasBody)
@@ -84,6 +122,11 @@
         {
             var queryParameters = this.Url?.Split(new [] { '?', '#' })
                 .Skip(1).ToArray();
+
+            //if (string.IsNullOrWhiteSpace(queryParameters[1]))
+            //{
+            //    return;
+            //}
 
             if (IsValidRequestQueryString(queryParameters))
             {
@@ -109,7 +152,8 @@
             {
                 var keyValuePair = kvp.Split('=', StringSplitOptions.RemoveEmptyEntries);
 
-                if (keyValuePair.Length != 2)
+                if (keyValuePair.Length != 
+                    GlobalConstants.ExactNumberOfParametersInRequestParameterKeValuePair)
                 {
                     throw new BadRequestException();
                 }

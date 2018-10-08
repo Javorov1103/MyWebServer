@@ -1,6 +1,8 @@
 ﻿namespace MyWebServer.HTTP.Responses
 {
     using MyWebServer.HTTP.Common;
+    using MyWebServer.HTTP.Cookies;
+    using MyWebServer.HTTP.Cookies.Contracts;
     using MyWebServer.HTTP.Enums;
     using MyWebServer.HTTP.Extensions;
     using MyWebServer.HTTP.Headers;
@@ -19,6 +21,7 @@
             this.StatusCode = statusCode;
             this.Headers = new HttpHeadersCollection();
             this.Content = new byte[0];
+            this.Cookies = new HttpCookieCollection();
         }
 
         public HttpResponseStatusCode StatusCode { get; }
@@ -26,6 +29,13 @@
         public IHttpHeadersCollection Headers { get; }
 
         public byte[] Content { get; set; }
+
+        public IHttpCookieCollection Cookies { get; }
+
+        public void AddCookie(HttpCookie cookie)
+        {
+            this.Cookies.Add(cookie);
+        }
 
         public void AddHeader(HttpHeader header)
         {
@@ -42,8 +52,18 @@
             var result = new StringBuilder();
 
             result.AppendLine($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}")
-                .AppendLine($"{this.Headers}")
-                .AppendLine();
+                .AppendLine($"{this.Headers}");
+
+            if (this.Cookies.HasCookies())
+            {
+                foreach (var httpCookie in this.Cookies)
+                {
+                    result.AppendLine($"{GlobalConstants.CookieResponseHeaderName}: {httpCookie}");
+                }
+               
+            }
+
+            result.AppendLine();
 
 
             return result.ToString();
