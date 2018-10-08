@@ -103,7 +103,9 @@
             var response = new RedirectResult("/");
             var cookieContent = this.cookieService.GetUserCookie(user.Username);
 
-            response.Cookies.Add(new HttpCookie(".auth-cakes", cookieContent,7));
+            var cookie = new HttpCookie(".auth-cakes", cookieContent, 7) { HttpOnly = true };
+
+            response.Cookies.Add(cookie);
 
             return response;
         }

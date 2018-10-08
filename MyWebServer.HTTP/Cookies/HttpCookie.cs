@@ -28,6 +28,8 @@
 
         public bool IsNew { get; }
 
+        public bool HttpOnly { get; set; } = true;
+
         public void Delete()
         {
             this.Expires = DateTime.UtcNow.AddDays(-1);
@@ -35,7 +37,13 @@
 
         public override string ToString()
         {
-            return $"{this.Key}={this.Value}; Expires={this.Expires:R}"; //+; Expires={this.Expires.ToLongTimeString()} ???
+            var str= $"{this.Key}={this.Value}; Expires={this.Expires:R}";
+
+            if (this.HttpOnly)
+            {
+                str += "; HttpOnly";
+            }
+            return str;
         }
 
     }
