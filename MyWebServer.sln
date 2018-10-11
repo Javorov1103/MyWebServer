@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyWebServer.Demo", "MyWebSe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{0DCD67A7-40AC-4FBA-8894-B777FDBF1C6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakesWebApp", "CakesWebApp\CakesWebApp.csproj", "{E0A780F7-463B-4287-A885-0FE52BB8D6CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CakesWebApp", "CakesWebApp\CakesWebApp.csproj", "{E0A780F7-463B-4287-A885-0FE52BB8D6CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IRunesWebApp", "IRunesWebApp\IRunesWebApp.csproj", "{F65DE73D-018F-42AA-9CE6-EC01EDB03C3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRunesWebApp", "IRunesWebApp\IRunesWebApp.csproj", "{F65DE73D-018F-42AA-9CE6-EC01EDB03C3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{8B3FDC2B-E034-4BEC-AF39-49A29481AEDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{F65DE73D-018F-42AA-9CE6-EC01EDB03C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F65DE73D-018F-42AA-9CE6-EC01EDB03C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F65DE73D-018F-42AA-9CE6-EC01EDB03C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B3FDC2B-E034-4BEC-AF39-49A29481AEDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B3FDC2B-E034-4BEC-AF39-49A29481AEDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B3FDC2B-E034-4BEC-AF39-49A29481AEDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B3FDC2B-E034-4BEC-AF39-49A29481AEDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
