@@ -117,7 +117,6 @@
         {
             this.Response.Headers.Add(new HttpHeader("Content-Type", "text/html"));
             this.Response.Content = Encoding.UTF8.GetBytes(content);
-            //this.Response.StatusCode = statusCode;
         }
     }
 }

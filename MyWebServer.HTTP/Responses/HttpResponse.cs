@@ -4,7 +4,6 @@
     using MyWebServer.HTTP.Cookies;
     using MyWebServer.HTTP.Cookies.Contracts;
     using MyWebServer.HTTP.Enums;
-    using MyWebServer.HTTP.Extensions;
     using MyWebServer.HTTP.Headers;
     using MyWebServer.HTTP.Headers.Contracts;
     using MyWebServer.HTTP.Responses.Contracts;
@@ -54,8 +53,13 @@
         {
             var result = new StringBuilder();
 
-            result.AppendLine($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}")
-                .AppendLine($"{this.Headers}");
+            //HTTP/1.1 200 OK
+            //
+            result
+                .Append($"{GlobalConstants.HttpOneProtocolFragment} {(int)this.StatusCode} {this.StatusCode.ToString()}")
+                .Append(GlobalConstants.HttpNewLine)
+                .Append(this.Headers)
+                .Append(GlobalConstants.HttpNewLine);
 
             if (this.Cookies.HasCookies())
             {
