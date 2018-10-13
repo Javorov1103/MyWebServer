@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyWebServer.WebServer\MyWebServer.WebServer.csproj" />
+    <ProjectReference Include="..\SIS.MVCFrameworkd\SIS.MVCFrameworkd.csproj" />
   </ItemGroup>
 
   <ItemGroup>
