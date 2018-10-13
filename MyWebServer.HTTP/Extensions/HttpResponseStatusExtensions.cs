@@ -15,6 +15,8 @@ namespace MyWebServer.HTTP.Extensions
                     return "200 OK";
                 case HttpResponseStatusCode.Created:
                     return "201 Created";
+                case HttpResponseStatusCode.Redirect:
+                    return "301 Redirect";
                 case HttpResponseStatusCode.Found:
                     return "302 Found";   
                 case HttpResponseStatusCode.SeeOther:

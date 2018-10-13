@@ -11,11 +11,6 @@
         {
             return this.View("Index");
         }
-
-        public IHttpResponse HelloUser()
-        {
-            return new HtmlResult($"<h1>Hello,{this.GetUsername()}!", HttpResponseStatusCode.Ok);
-        }
     }
 }
     

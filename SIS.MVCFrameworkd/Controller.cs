@@ -1,12 +1,13 @@
 ﻿namespace SIS.MVCFrameworkd
 {
     using MyWebServer.HTTP.Enums;
+    using MyWebServer.HTTP.Headers;
     using MyWebServer.HTTP.Requests.Contracts;
+    using MyWebServer.HTTP.Responses;
     using MyWebServer.HTTP.Responses.Contracts;
-    using MyWebServer.WebServer.Results;
     using SIS.MVCFrameworkd.Services;
     using System.Collections.Generic;
-    using System.IO;
+    using System.Text;
 
     public class Controller
     {
@@ -14,7 +15,10 @@
         {
             this.UserCookieService = new UserCookieService();
             this.HashService = new HashService();
+            this.Response = new HttpResponse();
         }
+
+        public IHttpResponse Response { get; set; }
 
         public IHttpRequest Request { get; set; }
 
@@ -44,7 +48,34 @@
             }
 
             var allContent = this.GetViewContent(viewName, viewBag);
-            return new HtmlResult(allContent, HttpResponseStatusCode.Ok);
+            this.PrepareHtmlResult(allContent);
+            return this.Response;
+        }
+
+        protected IHttpResponse File(byte[] content)
+        {
+            this.Response.Headers.Add(new HttpHeader(HttpHeader.ContentLength, content.Length.ToString()));
+            this.Response.Headers.Add(new HttpHeader(HttpHeader.ContentDisposition, "inline"));
+            this.Response.Content = content;
+            this.Response.StatusCode = HttpResponseStatusCode.Ok;
+
+            return this.Response;
+        }
+
+        protected IHttpResponse Redirect(string location)
+        {
+            this.Response.Headers.Add(new HttpHeader(HttpHeader.Location, location));
+            this.Response.StatusCode = HttpResponseStatusCode.Redirect;
+            return this.Response;
+        }
+
+        protected IHttpResponse Text(string content)
+        {
+            this.Response.Headers.Add(new HttpHeader("Content-Type", "text/plain"));
+            this.Response.Content = Encoding.UTF8.GetBytes(content);
+            this.Response.StatusCode = HttpResponseStatusCode.Ok;
+
+            return this.Response;
         }
 
         protected IHttpResponse BadRequestError(string errorMessage)
@@ -52,8 +83,10 @@
             var viewBag = new Dictionary<string, string>();
             viewBag.Add("Error", errorMessage);
             var allContent = this.GetViewContent("Error", viewBag);
+            this.PrepareHtmlResult(allContent);
+            this.Response.StatusCode = HttpResponseStatusCode.BadRequest;
 
-            return new HtmlResult(allContent, HttpResponseStatusCode.BadRequest);
+            return this.Response;
         }
 
         protected IHttpResponse ServerError(string errorMessage)
@@ -61,15 +94,16 @@
             var viewBag = new Dictionary<string, string>();
             viewBag.Add("Error", errorMessage);
             var allContent = this.GetViewContent("Error", viewBag);
-
-            return new HtmlResult(allContent, HttpResponseStatusCode.InternalServerError);
+            this.PrepareHtmlResult(allContent);
+            this.Response.StatusCode = HttpResponseStatusCode.InternalServerError;
+            return this.Response;
         }
 
         private string GetViewContent(string viewName,
             IDictionary<string, string> viewBag)
         {
-            var layoutContent = File.ReadAllText("Views/_Layout.html");
-            var content = File.ReadAllText("Views/" + viewName + ".html");
+            var layoutContent = System.IO.File.ReadAllText("Views/_Layout.html");
+            var content = System.IO.File.ReadAllText("Views/" + viewName + ".html");
             foreach (var item in viewBag)
             {
                 content = content.Replace("@Model." + item.Key, item.Value);
@@ -77,6 +111,13 @@
 
             var allContent = layoutContent.Replace("@RenderBody()", content);
             return allContent;
+        }
+
+        private void PrepareHtmlResult(string content)
+        {
+            this.Response.Headers.Add(new HttpHeader("Content-Type", "text/html"));
+            this.Response.Content = Encoding.UTF8.GetBytes(content);
+            //this.Response.StatusCode = statusCode;
         }
     }
 }

@@ -2,9 +2,7 @@
 {
     using CakesWebApp.Extensions;
     using CakesWebApp.Models;
-    using MyWebServer.HTTP.Requests.Contracts;
     using MyWebServer.HTTP.Responses.Contracts;
-    using MyWebServer.WebServer.Results;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -44,7 +42,7 @@
             }
 
             // Redirect
-            return new RedirectResult("/");
+            return this.Redirect("/");
         }
 
         public IHttpResponse ById()

@@ -5,12 +5,12 @@
     using MyWebServer.HTTP.Responses;
     using System.Text;
 
-    public class TextResult : HttpResponse
+    class TextResult : HttpResponse
     {
-        public TextResult(string content, HttpResponseStatusCode statusCode)
-            :base(statusCode)
+        public TextResult(string content, HttpResponseStatusCode responseStatusCode)
+            : base(responseStatusCode)
         {
-            this.Headers.Add(new HttpHeader("Content-Type", "text/plain"));
+            this.Headers.Add(new HttpHeader(HttpHeader.ContentType, "text/plain; charset=utf-8"));
             this.Content = Encoding.UTF8.GetBytes(content);
         }
     }

@@ -3,8 +3,6 @@
     using CakesWebApp.Models;
     using MyWebServer.HTTP.Cookies;
     using MyWebServer.HTTP.Responses.Contracts;
-    using MyWebServer.WebServer.Results;
-    using System;
     using System.Linq;
 
     public class AccountController : BaseController
@@ -75,7 +73,7 @@
            
             // TODO: Login
 
-            return new RedirectResult("/");
+            return this.Redirect("/");
         }
 
         public IHttpResponse Login()
@@ -97,32 +95,30 @@
                 return this.BadRequestError("Invalid username or password");
             }
 
-            var response = new RedirectResult("/");
+            ;
             var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
 
             var cookie = new HttpCookie(".auth-cakes", cookieContent, 7) { HttpOnly = true };
 
-            response.Cookies.Add(cookie);
+            this.Response.Cookies.Add(cookie);
 
-            return response;
+            return this.Redirect("/");
         }
 
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
             {
-             return new RedirectResult("/");
+                return this.Redirect("/");
             }
 
             var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
 
             cookie.Delete();
+            
+            this.Response.Cookies.Add(cookie);
 
-            var response = new RedirectResult("/");
-
-            response.Cookies.Add(cookie);
-
-            return response;
+            return this.Redirect("/");
         }
     }
 }

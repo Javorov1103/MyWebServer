@@ -10,5 +10,7 @@
 
         public const string CookieRequestHeaderName = "Cookie";
         public const string CookieResponseHeaderName = "Set-Cookie";
+
+        public static string[] ResourceExtensions = { ".js", ".css" };
     }
 }

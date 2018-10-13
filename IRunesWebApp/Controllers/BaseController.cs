@@ -3,11 +3,11 @@
     using IRunesWebApp.Data;
     using MyWebServer.HTTP.Enums;
     using MyWebServer.HTTP.Responses.Contracts;
-    using MyWebServer.WebServer.Results;
+    using SIS.MVCFrameworkd;
     using System.IO;
     using System.Runtime.CompilerServices;
 
-    public class BaseController
+    public class BaseController : Controller
     {
         private const string RootDirRelParh = "../../../";
 
@@ -25,27 +25,6 @@
         {
             this.Context = new IRunesDbContext();
         }
-
-        protected IHttpResponse View([CallerMemberName] string viewName = "")
-        {
-            string filePath = RootDirRelParh + ViewsFolderName + DirectoryDelimiter + this.GetControllerName
-                + DirectoryDelimiter + viewName + FileExtension;
-
-            if (!File.Exists(filePath))
-            {
-                return new BadRequestResult($"View {viewName} not found!", HttpResponseStatusCode.NotFound);
-            }
-
-            var fileContent = File.ReadAllText(filePath);
-
-            var response = new HtmlResult(fileContent, HttpResponseStatusCode.Ok);
-
-            return response;
-        }
-
-        protected IHttpResponse ServerError(string errorMessage)
-        {
-            return new HtmlResult(errorMessage, HttpResponseStatusCode.InternalServerError);
-        }
+       
     }
 }

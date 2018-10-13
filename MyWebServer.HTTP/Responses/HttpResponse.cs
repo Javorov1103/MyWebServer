@@ -13,18 +13,21 @@
 
     public class HttpResponse : IHttpResponse
     {
-        public HttpResponse(){}
-
-        public HttpResponse(
-            HttpResponseStatusCode statusCode)
+        public HttpResponse()
         {
-            this.StatusCode = statusCode;
             this.Headers = new HttpHeadersCollection();
             this.Content = new byte[0];
             this.Cookies = new HttpCookieCollection();
         }
 
-        public HttpResponseStatusCode StatusCode { get; }
+        public HttpResponse(
+            HttpResponseStatusCode statusCode) : this()
+        {
+            CoreValidator.ThrowIfNull(statusCode, nameof(statusCode));
+            this.StatusCode = statusCode;
+        }
+
+        public HttpResponseStatusCode StatusCode { get; set; }
 
         public IHttpHeadersCollection Headers { get; }
 

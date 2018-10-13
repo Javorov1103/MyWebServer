@@ -22,8 +22,6 @@
                 new AccountController { Request = request }.DoRegister();
             serverRoutingTable.Routes[HttpRequestMethod.POST]["/login"] = request =>
                 new AccountController { Request = request }.DoLogin();
-            serverRoutingTable.Routes[HttpRequestMethod.GET]["/hello"] = request =>
-                new HomeController { Request = request }.HelloUser();
             serverRoutingTable.Routes[HttpRequestMethod.GET]["/logout"] = request =>
                 new AccountController { Request = request }.Logout();
             serverRoutingTable.Routes[HttpRequestMethod.GET]["/cakes/add"] = request =>
