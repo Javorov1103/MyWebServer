@@ -1,10 +1,7 @@
 ﻿namespace CakesWebApp.Controllers
 {
-    using CakesWebApp.Data;
     using CakesWebApp.Models;
-    using CakesWebApp.Services;
     using MyWebServer.HTTP.Cookies;
-    using MyWebServer.HTTP.Requests.Contracts;
     using MyWebServer.HTTP.Responses.Contracts;
     using MyWebServer.WebServer.Results;
     using System;
@@ -12,23 +9,23 @@
 
     public class AccountController : BaseController
     {
-        private IHashService hashService;
+        
 
         public AccountController()
         {
-            this.hashService = new HashService();
+            
         }
 
-        public IHttpResponse Register(IHttpRequest request)
+        public IHttpResponse Register()
         {
             return this.View("Register");
         }
 
-        public IHttpResponse DoRegister(IHttpRequest request)
+        public IHttpResponse DoRegister()
         {
-            var userName = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
-            var confirmPass = request.FormData["confirmPassword"].ToString();
+            var userName = this.Request.FormData["username"].ToString().Trim();
+            var password = this.Request.FormData["password"].ToString();
+            var confirmPass = this.Request.FormData["confirmPassword"].ToString();
 
 
             //Validate
@@ -53,7 +50,7 @@
             }
 
             //Generete password hash
-            var hashedpassword = this.hashService.Hash(password);
+            var hashedpassword = this.HashService.Hash(password);
 
             //Create user
 
@@ -81,17 +78,17 @@
             return new RedirectResult("/");
         }
 
-        public IHttpResponse Login(IHttpRequest request)
+        public IHttpResponse Login()
         {
             return this.View("Login");
         }
 
-        public IHttpResponse DoLogin(IHttpRequest request)
+        public IHttpResponse DoLogin()
         {
-            var userName = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
+            var userName = this.Request.FormData["username"].ToString().Trim();
+            var password = this.Request.FormData["password"].ToString();
 
-            var hashedPass = this.hashService.Hash(password);
+            var hashedPass = this.HashService.Hash(password);
 
             var user = this.db.Users.FirstOrDefault(u => u.Username == userName && u.Password == hashedPass);
 
@@ -101,7 +98,7 @@
             }
 
             var response = new RedirectResult("/");
-            var cookieContent = this.cookieService.GetUserCookie(user.Username);
+            var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
 
             var cookie = new HttpCookie(".auth-cakes", cookieContent, 7) { HttpOnly = true };
 
@@ -110,14 +107,14 @@
             return response;
         }
 
-        public IHttpResponse Logout(IHttpRequest request)
+        public IHttpResponse Logout()
         {
-            if (!request.Cookies.ContainsCookie(".auth-cakes"))
+            if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
             {
              return new RedirectResult("/");
             }
 
-            var cookie = request.Cookies.GetCookie(".auth-cakes");
+            var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
 
             cookie.Delete();
 

@@ -29,7 +29,7 @@ namespace IRunesWebApp.Controllers
 
             var hashedPassword = this.hashService.Hash(password);
 
-            var user = this.Context.Users.FirstOrDefault(u => u.Username == username && u.HashedPassword == hashedPassword);
+            var user = this.Context.Users.FirstOrDefault(u => u.Username == username.ToString() && u.HashedPassword == hashedPassword);
 
             if (user == null)
             {

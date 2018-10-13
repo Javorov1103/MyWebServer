@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace CakesWebApp.Services
+namespace SIS.MVCFrameworkd.Services
 {
     public class HashService : IHashService
     {
@@ -20,8 +20,5 @@ namespace CakesWebApp.Services
         }
     }
 
-    public interface IHashService
-    {
-        string Hash(string stringToHash);
-    }
+    
 }

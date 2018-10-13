@@ -1,4 +1,4 @@
-﻿namespace CakesWebApp.Services
+﻿namespace SIS.MVCFrameworkd.Services
 {
     using System;
     using System.IO;
@@ -91,9 +91,5 @@
 
     
 
-    public interface IUserCookieService
-    {
-        string GetUserCookie(string userName);
-        string GetUserData(string cookie);
-    }
+    
 }
