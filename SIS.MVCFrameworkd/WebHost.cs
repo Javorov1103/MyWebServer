@@ -100,50 +100,65 @@
             //Go trough all the parameters
             foreach (var actionParameter in actionParameters)
             {
-                //we create an instance ef every parameter of the action
-                var instance = serviceCollection.CreateInstance(actionParameter.ParameterType);
-
-                //we get the properities of the concreate parameter
-                var properies = actionParameter.ParameterType.GetProperties();
-
-
-                //Go trough all the properies of the parameter of the action and set them with the data form the request
-                foreach (var propertyInfo in properies)
+                if (actionParameter.ParameterType.IsValueType || Type.GetTypeCode(actionParameter.ParameterType) == TypeCode.String)
                 {
-                    var key = propertyInfo.Name.ToLower();
-                    string stringValue = null;
-                    if (request.FormData.Any(x => x.Key.ToLower() == key))
-                    {
-                        stringValue = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
-                    }
-                    else if (request.QueryData.Any(x => x.Key.ToLower() == key))
-                    {
-                        stringValue = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
-                    }
-
-                    var typeCode = Type.GetTypeCode(propertyInfo.PropertyType);
-
-                    //Invoke our custom TryParse Method
-                    // If we want to use another type of data just add it to the Switch-case statement
-                    object value = TryParse(stringValue, typeCode);
-
-                    propertyInfo.SetMethod.Invoke(instance, new object[]
-                    {
-                        value
-                    });
+                    string stringValue = GetRequestData(request, actionParameter.Name);
+                    actionParametersObjects.Add(TryParse(stringValue, actionParameter.ParameterType));
                 }
+                else
+                {
+                    //we create an instance ef every parameter of the action
+                    var instance = serviceCollection.CreateInstance(actionParameter.ParameterType);
 
-                actionParametersObjects.Add(instance);
+                    //we get the properities of the concreate parameter
+                    var properies = actionParameter.ParameterType.GetProperties();
+
+
+                    //Go trough all the properies of the parameter of the action and set them with the data form the request
+                    foreach (var propertyInfo in properies)
+                    {
+                        //We get the data form the request
+                        string stringValue = GetRequestData(request, propertyInfo.Name);
+
+                        //Invoke our custom TryParse Method
+                        // If we want to use another type of data just add it to the Switch-case statement
+                        object value = TryParse(stringValue, propertyInfo.PropertyType);
+
+                        propertyInfo.SetMethod.Invoke(instance, new object[]
+                        {
+                        value
+                        });
+                    }
+
+                    actionParametersObjects.Add(instance);
+                }
             }
 
             return actionParametersObjects;
         }
 
+        private static string GetRequestData(IHttpRequest request, string key)
+        {
+            key = key.ToLower();
+            string stringValue = null;
+            if (request.FormData.Any(x => x.Key.ToLower() == key))
+            {
+                stringValue = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
+            }
+            else if (request.QueryData.Any(x => x.Key.ToLower() == key))
+            {
+                stringValue = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
+            }
+
+            return stringValue;
+        }
+
 
         // If we want to use another type of data just add it to the Switch-case statement
-        private static object TryParse(string stringValue, TypeCode typeCode)
+        private static object TryParse(string stringValue, Type type)
         {
-            object value = stringValue;
+            var typeCode = Type.GetTypeCode(type);
+            object value = null;
 
             switch (typeCode)
             {
@@ -184,6 +199,9 @@
                     {
                         value = doubleValue;
                     }
+                    break;
+                case TypeCode.String:
+                    value = stringValue;
                     break;
             }
 

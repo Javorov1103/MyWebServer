@@ -37,7 +37,7 @@
                 throw new Exception($"Type {type.FullName} cannot be instanciated");
             }
 
-            var constructor = type.GetConstructors().FirstOrDefault();
+            var constructor = type.GetConstructors().OrderBy(x=>x.GetParameters().Length).First();
             var constructorParams = constructor.GetParameters();
             List<object> constructorParamObjects = new List<object>();
             foreach (var param in constructorParams)
