@@ -1,7 +1,7 @@
 ﻿namespace CakesWebApp.Controllers
 {
-    using CakesWebApp.Extensions;
     using CakesWebApp.Models;
+    using CakesWebApp.ViewModels.Cake;
     using MyWebServer.HTTP.Responses.Contracts;
     using SIS.MVCFrameworkd.Routing;
     using System;
@@ -18,11 +18,11 @@
         }
 
         [HttpPost("/cakes/add")]
-        public IHttpResponse DoAddCakes()
+        public IHttpResponse DoAddCakes(DoAddCakesInputModel model)
         {
-            var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
-            var price = decimal.Parse(this.Request.FormData["price"].ToString().UrlDecode());
-            var picture = this.Request.FormData["picture"].ToString().Trim().UrlDecode();
+            var name = model.Name.Trim();
+            var price = decimal.Parse(model.Price);
+            var picture = model.Picture;
 
             // TODO: Validation
 

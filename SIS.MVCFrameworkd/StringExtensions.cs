@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-
-namespace CakesWebApp.Extensions
+﻿namespace SIS.MVCFrameworkd
 {
+    
+    using System.Net;
+
     public static class StringExtensions
     {
         public static string UrlDecode(this string input)

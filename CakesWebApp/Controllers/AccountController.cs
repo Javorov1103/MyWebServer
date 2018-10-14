@@ -89,10 +89,10 @@
         }
 
         [HttpPost("/login")]
-        public IHttpResponse DoLogin()
+        public IHttpResponse DoLogin(DoLoginInputModel model)
         {
-            var userName = this.Request.FormData["username"].ToString().Trim();
-            var password = this.Request.FormData["password"].ToString();
+            var userName = model.Username.Trim();
+            var password = model.Password;
 
             var hashedPass = this.hashService.Hash(password);
 
