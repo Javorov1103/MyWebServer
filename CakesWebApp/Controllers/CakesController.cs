@@ -53,6 +53,7 @@
         {
             var id = int.Parse(this.Request.QueryData["id"].ToString());
             var product = this.db.Products.FirstOrDefault(x => x.Id == id);
+
             if (product == null)
             {
                 return this.BadRequestError("Cake not found.");

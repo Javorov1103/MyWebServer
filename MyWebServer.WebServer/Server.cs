@@ -1,8 +1,11 @@
 ﻿namespace MyWebServer.WebServer
 {
     using MyWebServer.WebServer.Routing;
+    using System;
+    using System.Globalization;
     using System.Net;
     using System.Net.Sockets;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class Server
@@ -20,7 +23,7 @@
         public Server(int port, ServerRoutingTable serverRoutingTable)
         {
             this.port = port;
-            this.listener = new TcpListener(IPAddress.Parse(LocalhostIpAddress),this.port);
+            this.listener = new TcpListener(IPAddress.Parse(LocalhostIpAddress), port);
 
             this.serverRoutingTable = serverRoutingTable;
         }
@@ -30,22 +33,22 @@
             this.listener.Start();
             this.isRunning = true;
 
-            System.Console.WriteLine($"Server is running on http://{LocalhostIpAddress}:{this.port}");
+            Console.WriteLine($"Server started at http://{LocalhostIpAddress}:{this.port}");
+            while (isRunning)
+            {
+                Console.WriteLine("Waiting for client...");
 
-            var task = Task.Run(this.ListenLoop);
-            task.Wait();
+                var client = listener.AcceptSocketAsync().GetAwaiter().GetResult();
+
+                Task.Run(() => Listen(client));
+            }
         }
 
-        public async Task ListenLoop()
+        public async void Listen(Socket client)
         {
-            while (this.isRunning)
-            {
-                var client = await this.listener.AcceptSocketAsync();
-                var connectionHandler = new ConnectionHandler(client, serverRoutingTable);
-
-                var responseTask = connectionHandler.ProcessRequestAsync();
-                responseTask.Wait();
-            }
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            var connectionHandler = new ConnectionHandler(client, this.serverRoutingTable);
+            await connectionHandler.ProcessRequestAsync();
         }
     }
 }
