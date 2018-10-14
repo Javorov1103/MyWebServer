@@ -8,7 +8,7 @@
 
     public interface IHttpResponse
     {
-        HttpResponseStatusCode StatusCode { get; }
+        HttpResponseStatusCode StatusCode { get; set; }
 
         IHttpHeadersCollection Headers { get; }
 

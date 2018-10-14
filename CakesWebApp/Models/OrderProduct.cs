@@ -1,6 +1,6 @@
 ﻿namespace CakesWebApp.Models
 {
-   public class OrderProduct : BaseModel<int>
+   public class OrderProduct
     {
         public int OrderId { get; set; }
 

@@ -13,13 +13,19 @@
 
         public DbSet<OrderProduct> OrderProducts { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<OrderProduct>()
+                .HasKey(op => new { op.OrderId, op.ProductId });
+        }
+
         protected override void OnConfiguring(
             DbContextOptionsBuilder optionsBuilder)
         {
             
             optionsBuilder
-                .UseLazyLoadingProxies()
-                .UseSqlServer(@"Server=DESKTOP-N8JQK16\SQLEXPRESS;Database=Cakes;Integrated Security=True;");
+                .UseSqlServer(@"Server=DESKTOP-N8JQK16\SQLEXPRESS;Database=Cakes;Integrated Security=True;")
+                .UseLazyLoadingProxies();
         }
     }
 }

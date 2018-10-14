@@ -1,31 +1,23 @@
-﻿<!DOCTYPE html>
+﻿<h1>Login</h1>
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
-    <title></title>
-</head>
-<body>
-    <h1>Login</h1>
-
-    <form action="/login" method="post">
-        <label></label>
-        <div>
-            Username <input type="text" name="username" placeholder="Username" />
+<form method="post" action="/login">
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Username:</label>
+        <div class="col-sm-4">
+            <input class="form-control" name="username" type="text"
+                   placeholder="Username" />
         </div>
-        <div>
-            Password <input type="password" name="password" placeholder="Enter your password" />
-        </div>
-
-        <div>
-            <input type="submit" name="login" value="Login"/>
-        </div>
-    </form>
-    <div>
-        Dont have an account?
-        <form method="get" action="/register">
-            <input type="submit" value="Register"/>
-        </form>
     </div>
-</body>
-</html>
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Password:</label>
+        <div class="col-sm-4">
+            <input class="form-control" name="password" type="password"
+                   placeholder="Password" />
+        </div>
+    </div>
+    <div>
+        <input type="submit" value="Login" class="btn btn-primary" />
+    </div>
+</form>
+Don't have an account?
+<a href="/register" class="btn btn-primary">Register</a>

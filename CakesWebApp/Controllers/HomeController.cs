@@ -4,17 +4,25 @@
     using MyWebServer.HTTP.Requests.Contracts;
     using MyWebServer.HTTP.Responses.Contracts;
     using MyWebServer.WebServer.Results;
+    using SIS.MVCFrameworkd.Routing;
+    using System.Collections.Generic;
 
     public class HomeController : BaseController
     {
-        public IHttpResponse Index(IHttpRequest request)
+        [HttpGet("/")]
+        public IHttpResponse Index()
         {
             return this.View("Index");
         }
 
-        public IHttpResponse HelloUser(IHttpRequest request)
+        [HttpGet("/hello")]
+        public IHttpResponse HelloUser()
         {
-            return new HtmlResult($"<h1>Hello,{this.GetUsername(request)}!", HttpResponseStatusCode.Ok);
+            return this.View("HelloUser", new Dictionary<string, string>
+            {
+                { "Username", this.User}
+            }
+            );
         }
     }
 }

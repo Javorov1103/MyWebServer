@@ -1,4 +1,6 @@
-﻿namespace MyWebServer.HTTP.Common
+﻿using System;
+
+namespace MyWebServer.HTTP.Common
 {
    public static class GlobalConstants
     {
@@ -10,5 +12,9 @@
 
         public const string CookieRequestHeaderName = "Cookie";
         public const string CookieResponseHeaderName = "Set-Cookie";
+
+        public static string[] ResourceExtensions = { ".js", ".css" };
+
+        public static string HttpNewLine = "\r\n";
     }
 }

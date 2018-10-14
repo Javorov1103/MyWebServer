@@ -1,4 +1,4 @@
-﻿namespace CakesWebApp.Services
+﻿namespace Services
 {
     using System;
     using System.IO;

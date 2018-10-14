@@ -1,34 +1,35 @@
 ﻿namespace CakesWebApp.Controllers
 {
-    using CakesWebApp.Data;
     using CakesWebApp.Models;
-    using CakesWebApp.Services;
+    using CakesWebApp.ViewModels.Account;
     using MyWebServer.HTTP.Cookies;
-    using MyWebServer.HTTP.Requests.Contracts;
     using MyWebServer.HTTP.Responses.Contracts;
-    using MyWebServer.WebServer.Results;
-    using System;
+    using SIS.MVCFrameworkd.Routing;
+    using SIS.MVCFrameworkd.Services;
     using System.Linq;
 
     public class AccountController : BaseController
     {
         private IHashService hashService;
 
-        public AccountController()
+        public AccountController(IHashService hashService)
         {
-            this.hashService = new HashService();
+            this.hashService = hashService;
         }
 
-        public IHttpResponse Register(IHttpRequest request)
+        [HttpGet("/register")]
+        public IHttpResponse Register()
         {
             return this.View("Register");
         }
 
-        public IHttpResponse DoRegister(IHttpRequest request)
+        [HttpPost("/register")]
+        public IHttpResponse DoRegister(DoRegisterInputModel model)
         {
-            var userName = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
-            var confirmPass = request.FormData["confirmPassword"].ToString();
+            var userName = model.Username.Trim();
+            var password = model.Password;
+            var confirmPass = model.ConfirmPassword;
+
 
 
             //Validate
@@ -78,18 +79,20 @@
            
             // TODO: Login
 
-            return new RedirectResult("/");
+            return this.Redirect("/");
         }
 
-        public IHttpResponse Login(IHttpRequest request)
+        [HttpGet("/login")]
+        public IHttpResponse Login()
         {
             return this.View("Login");
         }
 
-        public IHttpResponse DoLogin(IHttpRequest request)
+        [HttpPost("/login")]
+        public IHttpResponse DoLogin(DoLoginInputModel model)
         {
-            var userName = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
+            var userName = model.Username.Trim();
+            var password = model.Password;
 
             var hashedPass = this.hashService.Hash(password);
 
@@ -100,32 +103,31 @@
                 return this.BadRequestError("Invalid username or password");
             }
 
-            var response = new RedirectResult("/");
-            var cookieContent = this.cookieService.GetUserCookie(user.Username);
+            ;
+            var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
 
             var cookie = new HttpCookie(".auth-cakes", cookieContent, 7) { HttpOnly = true };
 
-            response.Cookies.Add(cookie);
+            this.Response.Cookies.Add(cookie);
 
-            return response;
+            return this.Redirect("/");
         }
 
-        public IHttpResponse Logout(IHttpRequest request)
+        [HttpGet("/logout")]
+        public IHttpResponse Logout()
         {
-            if (!request.Cookies.ContainsCookie(".auth-cakes"))
+            if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
             {
-             return new RedirectResult("/");
+                return this.Redirect("/");
             }
 
-            var cookie = request.Cookies.GetCookie(".auth-cakes");
+            var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
 
             cookie.Delete();
+            
+            this.Response.Cookies.Add(cookie);
 
-            var response = new RedirectResult("/");
-
-            response.Cookies.Add(cookie);
-
-            return response;
+            return this.Redirect("/");
         }
     }
 }

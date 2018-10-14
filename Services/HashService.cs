@@ -1,9 +1,10 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace CakesWebApp.Services
+﻿namespace Services
 {
+    using System;
+    using System.Security.Cryptography;
+    using System.Text;
+
+
     public class HashService : IHashService
     {
         public string Hash(string stringToHash)

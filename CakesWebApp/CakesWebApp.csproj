@@ -12,10 +12,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyWebServer.WebServer\MyWebServer.WebServer.csproj" />
+    <ProjectReference Include="..\SIS.MVCFrameworkd\SIS.MVCFrameworkd.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Views\AddCakes.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\CakeById.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Error.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\HelloUser.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Views\Index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -25,6 +37,14 @@
     <None Update="Views\Register.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Views\_Layout.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="ViewModels\Home\" />
   </ItemGroup>
 
 </Project>

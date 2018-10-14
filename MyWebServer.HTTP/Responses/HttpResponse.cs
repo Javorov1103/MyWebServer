@@ -4,7 +4,6 @@
     using MyWebServer.HTTP.Cookies;
     using MyWebServer.HTTP.Cookies.Contracts;
     using MyWebServer.HTTP.Enums;
-    using MyWebServer.HTTP.Extensions;
     using MyWebServer.HTTP.Headers;
     using MyWebServer.HTTP.Headers.Contracts;
     using MyWebServer.HTTP.Responses.Contracts;
@@ -13,18 +12,21 @@
 
     public class HttpResponse : IHttpResponse
     {
-        public HttpResponse(){}
-
-        public HttpResponse(
-            HttpResponseStatusCode statusCode)
+        public HttpResponse()
         {
-            this.StatusCode = statusCode;
             this.Headers = new HttpHeadersCollection();
             this.Content = new byte[0];
             this.Cookies = new HttpCookieCollection();
         }
 
-        public HttpResponseStatusCode StatusCode { get; }
+        public HttpResponse(
+            HttpResponseStatusCode statusCode) : this()
+        {
+            CoreValidator.ThrowIfNull(statusCode, nameof(statusCode));
+            this.StatusCode = statusCode;
+        }
+
+        public HttpResponseStatusCode StatusCode { get; set; }
 
         public IHttpHeadersCollection Headers { get; }
 
@@ -51,8 +53,13 @@
         {
             var result = new StringBuilder();
 
-            result.AppendLine($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}")
-                .AppendLine($"{this.Headers}");
+            //HTTP/1.1 200 OK
+            //
+            result
+                .Append($"{GlobalConstants.HttpOneProtocolFragment} {(int)this.StatusCode} {this.StatusCode.ToString()}")
+                .Append(GlobalConstants.HttpNewLine)
+                .Append(this.Headers)
+                .Append(GlobalConstants.HttpNewLine);
 
             if (this.Cookies.HasCookies())
             {
