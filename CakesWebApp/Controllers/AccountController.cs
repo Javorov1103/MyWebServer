@@ -3,22 +3,26 @@
     using CakesWebApp.Models;
     using MyWebServer.HTTP.Cookies;
     using MyWebServer.HTTP.Responses.Contracts;
+    using SIS.MVCFrameworkd.Routing;
+    using SIS.MVCFrameworkd.Services;
     using System.Linq;
 
     public class AccountController : BaseController
     {
-        
+        private IHashService hashService;
 
-        public AccountController()
+        public AccountController(IHashService hashService)
         {
-            
+            this.hashService = hashService;
         }
 
+        [HttpGet("/register")]
         public IHttpResponse Register()
         {
             return this.View("Register");
         }
 
+        [HttpPost("/register")]
         public IHttpResponse DoRegister()
         {
             var userName = this.Request.FormData["username"].ToString().Trim();
@@ -48,7 +52,7 @@
             }
 
             //Generete password hash
-            var hashedpassword = this.HashService.Hash(password);
+            var hashedpassword = this.hashService.Hash(password);
 
             //Create user
 
@@ -76,17 +80,19 @@
             return this.Redirect("/");
         }
 
+        [HttpGet("/login")]
         public IHttpResponse Login()
         {
             return this.View("Login");
         }
 
+        [HttpPost("/login")]
         public IHttpResponse DoLogin()
         {
             var userName = this.Request.FormData["username"].ToString().Trim();
             var password = this.Request.FormData["password"].ToString();
 
-            var hashedPass = this.HashService.Hash(password);
+            var hashedPass = this.hashService.Hash(password);
 
             var user = this.db.Users.FirstOrDefault(u => u.Username == userName && u.Password == hashedPass);
 
@@ -105,6 +111,7 @@
             return this.Redirect("/");
         }
 
+        [HttpGet("/logout")]
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))

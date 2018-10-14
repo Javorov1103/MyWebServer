@@ -13,8 +13,6 @@
     {
         public Controller()
         {
-            this.UserCookieService = new UserCookieService();
-            this.HashService = new HashService();
             this.Response = new HttpResponse();
         }
 
@@ -22,22 +20,25 @@
 
         public IHttpRequest Request { get; set; }
 
-        protected IUserCookieService UserCookieService { get; set; }
 
-        protected IHashService HashService { get; set; }
+        public IUserCookieService UserCookieService { get; internal set; }
 
-        protected string GetUsername()
+        //protected IHashService HashService { get; set; }
+
+        protected string User
         {
-            if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
+            get
             {
-                return null;
+                if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
+                {
+                    return null;
+                }
+
+                var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
+                var cookieContent = cookie.Value;
+                var userName = this.UserCookieService.GetUserData(cookieContent);
+                return userName;
             }
-
-            var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
-            var cookieContent = cookie.Value;
-            var userName = this.UserCookieService.GetUserData(cookieContent);
-            return userName;
-
         }
 
         protected IHttpResponse View(string viewName, IDictionary<string, string> viewBag = null)

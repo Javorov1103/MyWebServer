@@ -1,10 +1,10 @@
 ﻿namespace SIS.MVCFrameworkd
-{
-    using MyWebServer.WebServer.Routing;
+{    
+    using SIS.MVCFrameworkd.Services.Contracts;
 
     public interface IMvcApplication
     {
-        void Configure(ServerRoutingTable table);
-        void ConfigureServices();
+        void Configure();
+        void ConfigureServices(IServiceCollection collection);
     }
 }

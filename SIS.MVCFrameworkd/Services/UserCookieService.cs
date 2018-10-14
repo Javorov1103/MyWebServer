@@ -1,5 +1,6 @@
 ﻿namespace SIS.MVCFrameworkd.Services
 {
+    using SIS.MVCFrameworkd.Logger.Contracts;
     using System;
     using System.IO;
     using System.Security.Cryptography;
@@ -7,10 +8,19 @@
 
     public class UserCookieService : IUserCookieService
     {
+        private readonly ILogger logger;
+
+        public UserCookieService(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         public const string EncryptKey = "E546C8DF278CD5931069B522E695D4F2";
 
         public string GetUserCookie(string userName)
         {
+            
+
             var cookieContent = EncryptString(userName, EncryptKey);
 
             return cookieContent;
@@ -19,6 +29,8 @@
 
         public string GetUserData(string cookie)
         {
+            logger.Log("GetUserData()" + cookie); 
+
             var userName = DecryptString(cookie, EncryptKey);
             return userName;
         }

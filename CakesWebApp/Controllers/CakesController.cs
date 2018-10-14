@@ -3,6 +3,7 @@
     using CakesWebApp.Extensions;
     using CakesWebApp.Models;
     using MyWebServer.HTTP.Responses.Contracts;
+    using SIS.MVCFrameworkd.Routing;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -10,11 +11,13 @@
 
     public class CakesController : BaseController
     {
+        [HttpGet("/cakes/add")]
         public IHttpResponse AddCakes()
         {
             return this.View("AddCakes");
         }
 
+        [HttpPost("/cakes/add")]
         public IHttpResponse DoAddCakes()
         {
             var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
@@ -45,6 +48,7 @@
             return this.Redirect("/");
         }
 
+        [HttpGet("/cakes/view")]
         public IHttpResponse ById()
         {
             var id = int.Parse(this.Request.QueryData["id"].ToString());
