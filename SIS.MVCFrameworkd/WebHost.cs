@@ -10,6 +10,7 @@
     using SIS.MVCFrameworkd.Services;
     using SIS.MVCFrameworkd.Services.Contracts;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
@@ -34,7 +35,7 @@
 
         private static void AutoRegisterRoutes(ServerRoutingTable table, IMvcApplication application, IServiceCollection serviceCollection)
         {
-           var controllers = application.GetType().Assembly.GetTypes().Where(t=>t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(Controller)));
+            var controllers = application.GetType().Assembly.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(Controller)));
 
             foreach (var controller in controllers)
             {
@@ -42,7 +43,7 @@
 
                 foreach (var methodInfo in getMethods)
                 {
-                   var httpAttribute = (HttpAttribute)methodInfo.GetCustomAttributes(true).FirstOrDefault(x => x.GetType().IsSubclassOf(typeof(HttpAttribute)));
+                    var httpAttribute = (HttpAttribute)methodInfo.GetCustomAttributes(true).FirstOrDefault(x => x.GetType().IsSubclassOf(typeof(HttpAttribute)));
 
                     if (httpAttribute == null)
                     {
@@ -66,7 +67,38 @@
             controllerInstance.Request = request;
             controllerInstance.UserCookieService = serviceCollection.CreateInstance<IUserCookieService>();
 
-           var response =  methodInfo.Invoke(controllerInstance, new object[] { }) as IHttpResponse;
+
+            var actionParameters = methodInfo.GetParameters();
+            var actionParametersObjects = new List<object>();
+            foreach (var actionParameter in actionParameters)
+            {
+                var instance = serviceCollection.CreateInstance(actionParameter.ParameterType);
+
+                var properies = actionParameter.ParameterType.GetProperties();
+
+                foreach (var propertyInfo in properies)
+                {
+                    var key = propertyInfo.Name.ToLower();
+                    object value = null;
+                    if (request.FormData.Any(x => x.Key.ToLower() == key))
+                    {
+                        value = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString();
+                    }
+                    else if (request.QueryData.Any(x => x.Key.ToLower() == key))
+                    {
+                        value = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString();
+                    }
+
+                    propertyInfo.SetMethod.Invoke(instance, new object[]
+                    {
+                        value
+                    });
+                }
+
+                actionParametersObjects.Add(instance);
+            }
+
+            var response = methodInfo.Invoke(controllerInstance, actionParametersObjects.ToArray()) as IHttpResponse;
 
             return response;
         }

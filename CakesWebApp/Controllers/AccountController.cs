@@ -1,6 +1,7 @@
 ﻿namespace CakesWebApp.Controllers
 {
     using CakesWebApp.Models;
+    using CakesWebApp.ViewModels.Account;
     using MyWebServer.HTTP.Cookies;
     using MyWebServer.HTTP.Responses.Contracts;
     using SIS.MVCFrameworkd.Routing;
@@ -23,11 +24,12 @@
         }
 
         [HttpPost("/register")]
-        public IHttpResponse DoRegister()
+        public IHttpResponse DoRegister(DoRegisterInputModel model)
         {
-            var userName = this.Request.FormData["username"].ToString().Trim();
-            var password = this.Request.FormData["password"].ToString();
-            var confirmPass = this.Request.FormData["confirmPassword"].ToString();
+            var userName = model.Username.Trim();
+            var password = model.Password;
+            var confirmPass = model.ConfirmPassword;
+
 
 
             //Validate
