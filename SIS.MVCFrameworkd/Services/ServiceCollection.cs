@@ -38,7 +38,9 @@
             }
 
             var constructor = type.GetConstructors().OrderBy(x=>x.GetParameters().Length).First();
+
             var constructorParams = constructor.GetParameters();
+
             List<object> constructorParamObjects = new List<object>();
             foreach (var param in constructorParams)
             {

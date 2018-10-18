@@ -2,10 +2,8 @@
 {
     using MyWebServer.WebServer.Routing;
     using System;
-    using System.Globalization;
     using System.Net;
     using System.Net.Sockets;
-    using System.Threading;
     using System.Threading.Tasks;
 
     public class Server
@@ -46,7 +44,6 @@
 
         public async void Listen(Socket client)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var connectionHandler = new ConnectionHandler(client, this.serverRoutingTable);
             await connectionHandler.ProcessRequestAsync();
         }
